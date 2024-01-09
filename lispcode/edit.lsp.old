@@ -1,0 +1,119 @@
+(edit ps psb rep a d b push pop lastcdr pref ins del < pp p pc cmds h inp )
+
+(define edit 
+(lambda (l )
+ (prog (curr prev x )
+  top  (ps l )
+       (setq prev (list l ))
+  loop (terpri )
+       (cond ((eq (setq x (inp (quote edit: )))(quote q ))
+              (return (quote quit )))
+             ((eq x (quote t ))
+              (go top ))
+             ((member x cmds )
+              (x ))
+             (T (print (quote (illegal cmd )))))
+       (go loop ]
+
+(define ps
+ (lambda (l )
+  (print (car (setq curr l ]
+
+(define psb
+ (lambda (fn )
+  (cond ((atom (fn curr ))
+         (print (quote eol )))
+        (T (prog NIL
+                 (setq prev (cons curr prev ))
+                 (ps (fn curr )) )) )) )
+
+(define rep
+ (lambda NIL
+  (print (car (rplaca curr (inp (quote rep: )))))))
+
+(define a (lambda NIL (psb (quote cdr ))))
+
+(define d (lambda NIL (psb (quote car ))))
+
+(define b
+ (lambda NIL
+  (cond ((null (cdr prev ))
+         (print (quote top )))
+        (T (prog NIL
+                 (ps (car prev ))
+                 (setq prev (cdr prev )))))))
+
+(define push (lambda NIL (ps (rplaca curr (list (car curr ))))))
+
+(define pop
+ (lambda NIL
+  (cond ((atom (car curr ))
+         (print (quote (not a list ))))
+        (T (prog NIL
+                 (rplacd (lastcdr (car curr ))(cdr curr ))
+                 (ps (conz curr (car (car curr ))(cdr (car curr )))))))))
+
+(define lastcdr
+ (lambda (x )
+  (cond ((atom x )
+         (list x ))
+        ((null (cdr x ))x )
+        (T (lastcdr (cdr x ))))))
+
+(define pref
+ (lambda NIL
+  (ps (rplaca curr (cons (inp (quote pref: ))(car curr ))))))
+
+(define ins
+ (lambda NIL
+  (prog NIL
+        (rplacd curr (cons (inp (quote ins: ))(cdr curr )))
+        (a ))))
+
+(define del
+ (lambda NIL
+  (prog NIL
+        ((lambda (x )
+          (cond ((eq curr x )
+                 (conz curr (cadr curr )(cdr (cdr curr ))))
+                ((eq curr (cdr x ))
+                 (rplacd x (cdr curr )))
+                (T (rplaca x (cdr curr ))) ) )
+         (car prev ) )
+        (b ))))
+
+(define <
+ (lambda NIL
+  (prog (y )
+        (setq y curr )
+        l
+        ((lambda (x )
+          (cond ((eq x (quote a ))
+                 (cond ((null (cdr y ))
+                        (print (quote eol )))
+                       (T (print (car (setq y (cdr y )) )) )) )
+                ((eq x (quote > ))
+                 (return (cond ((eq curr y )
+                                (push ))
+                               (T (prog NIL
+                                       (conz curr
+                                         (cons (car curr )(cdr curr ))
+                                         (cdr y ))
+                                       (rplacd y NIL )
+                                       (print (car curr)) )) )) )
+                 (T (return (print (quote aborted )) )) ))
+         (inp (quote <: )))
+        (go l ))))
+
+(define pp (lambda NIL (print l )))
+
+(define p (lambda NIL (print curr )))
+
+(define pc (lambda NIL (print (car curr ))))
+
+(setq cmds (quote (a d b rep del ins push pop pref pp p pc h <)))
+
+(define h (lambda NIL (print (append cmds '(> q) ]
+
+(define inp (lambda (x )(progn (prin1 x )(read ]
+NIL 

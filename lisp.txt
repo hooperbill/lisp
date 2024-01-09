@@ -1,0 +1,294 @@
+I have yet to write the definitions all the builtin functions of
+tinylisp. The follow list is all of the avaliable functions. This lisp
+is based on MIT MACLISP, with the exception of the define function. I
+used the manual titled "The Revised Maclisp Manual" May 21, 1983 for
+this implementation.
+
+As I mentioned the define function is different. Since this program
+was an exercise to learn about lisp and it's inner workings, I
+implemented the define function to reflect the internal representation
+of the function. Although this leads to more wordy code (as if it lisp
+wasn't difficult enough already) it does provide an insight to how the
+function definition process works.
+
+If you find any bugs or have any enhancments or just want to talk
+about lisp email me at wgh@hprmo. Please do not send comments about
+how bad the writing style is or how to format c or lisp code :-).
+
+Have fun!
+Bill Hooper
+
+
+Included are several lisp programs as examples.
+
+adv.lsp - a very simple adventure program with only the movement
+implemented.
+
+edit.lsp - a lisp editor straight from DR. DOBBS. For those of you who
+never had the guts to throw back issues away the article is in issue
+#38. The editor is executed as;
+
+  (edit (getd 'fn))
+
+to edit a function and
+
+  (edit list)
+
+to edit a list and
+
+  (edit (plist 'propertylist))
+
+to edit a rpoperty list. The edit commands are:
+
+  a - across to the next element of the list.
+  d - down into the current element. Must be a list.
+  b - backup to the previous item. If at the first item of a list you
+      backup to the list.
+  rep - replace the current item.
+  del - delete current item.
+  ins - insert input after the current item.
+  push - place one level of parens around the current item.
+  pop - remove one level of parens from around the current item.
+  < - similar to push, but groups items into a list. The a (across)
+      command is used to move across the items. The > is then used to
+      close the list of items selected. Any command other than a or >
+      will abort the <.
+  pref - insert input in front of the first element of the current
+         item. The current item must be a list.
+  pp - print the complete edited list.
+  p - print the current item in context.
+  pc - print the current item.
+  t - go the the top of the edited list.
+  q - quit editor.
+
+guess.lsp - high/low guessing game.
+sum.lsp - sum a list of numbers.
+parse.lsp - an interesting parser from Computer Language, November 1984
+
+Function definitions:
+
+(clear)
+
+Clear the lisp environment. Everything will be lost. Returns NIL.
+
+(gc)
+
+Force garbage collection. Returns the number of available nodes.
+
+(save list filename)
+
+Save a list of objects to the named file. 
+
+(load filename)
+
+Load object from a file. Returns a list of objects loaded.
+
+(quit)
+
+Exit lisp and return to the shell prompt.
+
+(trace)
+(untrace)
+
+Turn on and off the internal tracing. No a very good trace facility
+but better than nothing.  Displays the input and output of the
+internal eval function.
+
+(eval arg)
+
+Evaluate the argument.
+
+(assoc object alist)
+
+Look up an object in the association list alist. The return value is
+the first dotted pair whose car is equal to object or NIL is noe
+found.
+
+(member
+
+(apply fn arg)
+
+Applies the function fn to the list of arguments arg.
+
+(define fn l)
+lambda
+nlambda
+macro
+
+Function definition. The are four types of function definitions;
+
+(define fn (lambda list body))
+
+Where function fn is evaluated the arguments of fn (if any) are
+evaluated and paired with the lambda list. The body is then applied to
+this list of paired variables.
+
+(define fn (lambda object body))
+
+Similar to the above lambda, but used when the arguments of fn are
+unknown. The object is set to the length of the fn argument list.  The
+functions arg, listify, and setarg are used to managed the argumnet
+list with in the body.
+
+(define fn (nlambda list body))
+
+Identical to the lambda version, except the arguments of function fn
+are not evaluated.
+
+(define fn (nlambda object list))
+
+Not supported. Result are undefined.
+
+(define fn (macro object list))
+
+The function is evaluated (or expanded) as the lambda function with
+the results then being evaluated.
+
+putprop
+get
+
+(getd fn)
+
+Returns the internal representation of the function fn. If an internal
+function is use the number of arguments is returned.
+
+plist
+remprop
+defprop
+setplist
+
+Property list functions
+
+and
+or
+not
+
+(append l1 l2 l3 ....)
+
+Returns the concatenation of the arguments.
+
+nconc
+reverse
+nreverse
+xcons
+ncons
+
+
+(delete q l)
+
+Returns the argument l with all occurences of q removed.
+
+equal
+subst
+length
+nthcdr
+nth
+maplist
+mapcar
+random
+abs
+oddp
+mod
+divide
+times
+minus
+difference
+diff
+plus
+sub1
+add1
+lessp
+greaterp
+minusp
+zerop
+plusp
+numberp
+null
+atom
+listp
+
+
+prog
+return
+go
+progn
+prog1
+
+let
+do
+
+arg
+listify
+setarg
+
+read
+terpri
+princ
+prin1
+print
+
+push
+pop
+
+conz
+set
+last
+rplaca
+rplacd
+cons
+list
+eq
+cond
+
+caddr
+cadr
+cdr
+car
+
+setq
+quote or '
+
+--------------------------------------------------------------------------
+Things to do:
+
+This code was originally written for CP/M C and the management of
+memory was a little different (a major understatement). The allocation
+of property name space is fixed with a simple overflow check. A more
+sophisticated name manager should be added. [This is completed and in
+this version.]
+
+Program arguments should be added to allow the user to select how much
+memory should be used for property names and nodes. Right now the
+memory allocated is hard coded. Also an argument to autoload lisp code.
+
+The read and print functions should have a second argument to allow
+files, along with an open and close function. If the second argument
+is missing the stdio is assumed.
+
+References:
+
+Dr Dobb's Journal of Computer Calisthenics & Orthodontia
+issue #30
+
+Dr Dobb's Journal of Computer Calisthenics & Orthodontia
+issue #38
+
+Computer Language
+November 1984
+
+Scientific American
+(who knows when)
+article by Douglas Hofstader
+
+A Portable Lisp Interpreter
+L. A. Cox Jr.
+US Department of Commerce
+National Technical Information Service
+
+The Art of Computer Programming
+Volume 1, Fundamental Algorithims
+Donald E. Knuth
+
+The Revised Maclisp Manual
+Kent M. Pitman
+Draft #14, May 21, 1983, Saturday Evening Edition
